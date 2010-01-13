@@ -2472,6 +2472,16 @@ this.makeHtml = function(text) {
 	g_titles = new Array();
 	g_html_blocks = new Array();
 
+	// Donot allow the user to enter html directly to avoid
+	// xss attack.For now strip all the html tag entered by
+	// the user
+	// TODO: create a whitelist of html tags and allow that tags only
+	
+	 
+	// strip the user entered html
+	text = text.replace(/<\S[^><]*>/g, "");
+
+
 	// attacklab: Replace ~ with ~T
 	// This lets us use tilde as an escape char to avoid md5 hashes
 	// The choice of character is arbitray; anything that isn't
