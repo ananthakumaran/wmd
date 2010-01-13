@@ -1744,7 +1744,19 @@ Attacklab.wmdBase = function(){
 			
 		};
 		
-		util.addEvent(top, "load", loadListener);
+		// The editor cann't be created after the page is loaded bcoz we 
+		// are creating the editor after the page load event.This makes it 
+		// impossible to create a editor after a ajax response.
+		// To create a editor after ajax response set the isAjax 
+		// 
+		//  TODO find a clear way to fix this. one way is to keep track whether 
+		//  the page load event. if it was fired earlier the load the editor immediatly 
+		if (wmd_options.isAjax) {
+			loadListener();
+		}
+		else {
+			util.addEvent(top, "load", loadListener);
+		}
 	};
 	
 	wmd.previewManager = function(){
