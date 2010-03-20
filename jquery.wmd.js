@@ -2366,6 +2366,7 @@ if(!Attacklab.wmd)
 };
 
 }
+
 //
 // showdown.js -- A javascript port of Markdown.
 //
@@ -3697,7 +3698,6 @@ var Showdown = Attacklab.showdown;
 if (Attacklab.fileLoaded) {
 	Attacklab.fileLoaded("showdown.js");
 }
-
 
 // Copyright (C) 2006 Google Inc.
 //
@@ -5177,4 +5177,3 @@ window['_pr_isIE6'] = function () {
         'PR_TYPE': PR_TYPE
       };
 })();
-
