@@ -1,5 +1,5 @@
 
-task :default => [:concat] 
+task :default => [:minify] 
 
 task :concat do
 	f = File.new('jquery.wmd.js','w')
@@ -7,4 +7,8 @@ task :concat do
 		f.puts File.read(src)
 	end
 	f.close
+end
+
+task :minify => [:concat] do
+	system("java -jar build/compiler.jar --js jquery.wmd.js --js_output_file jquery.wmd.min.js")
 end
