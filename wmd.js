@@ -933,6 +933,9 @@ Attacklab.wmdBase = function(){
 				// on mousedown.
 				if(global.isIE) {
 					button.onmousedown =  function() { 
+                                                if (doc.activeElement && doc.activeElement !== inputArea) {
+						        return
+						}
 						wmd.ieRetardedClick = true;
 						wmd.ieCachedRange = document.selection.createRange(); 
 					};
