@@ -1086,6 +1086,14 @@ Attacklab.wmdBase = function(){
 			
 					var keyCode = key.charCode || key.keyCode;
 					var keyCodeStr = String.fromCharCode(keyCode).toLowerCase();
+
+                                        // Bugfix for messed up DEL and .
+				        if (keyCode === 46) {
+						keyCodeStr = "";
+					}
+					if (keyCode === 190) {
+						keyCodeStr = ".";
+					}
 					
 					switch(keyCodeStr) {
 						case "b":
