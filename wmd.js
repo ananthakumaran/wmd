@@ -1714,7 +1714,8 @@ Attacklab.wmdBase = function(){
 			};
 			
 			if (isImage) {
-				util.prompt(imageDialogText, imageDefaultText, makeLinkMarkdown);
+				// add fourth param to identify image window
+			        util.prompt(imageDialogText, imageDefaultText, makeLinkMarkdown, 1);
 			}
 			else {
 				util.prompt(linkDialogText, linkDefaultText, makeLinkMarkdown);
@@ -1938,12 +1939,20 @@ Attacklab.wmdBase = function(){
 				}
 			}
 			
-			if (wmd.panels.preview) {
-				wmd.panels.preview.innerHTML = text;
-				// prettify the code
+			if (wmd.panels.preview) {	
+			    var okTags = /^(<\/?(b|blockquote|code|del|dd|dl|dt|em|h1|h2|h3|i|kbd|li|ol|p|pre|s|sup |sub|strong|strike|ul)>|<(br|hr)\s?\/?>)$/i;	
+			    var okLinks = /^(<a\shref="(\#\d+|(https?|ftp):\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.; \(\)]+)"(\stitle="[^"<>]+")?\s?>|<\/a>)$/i ;	
+			    var okImg = /^(<img\ssrc="https?:(\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]+)&quo t;(\swidth="\d{1,3}")?(\sheight="\d{1,3}")?(\salt="[ ^"<>]*")?(\stitle="[^"<>]*")?\s?\/?>) $/i;	
+			    text = text.replace(/<[^<>]*>?/gi, function (tag) {	
+			        return (tag.match(okTags) || tag.match(okLinks) || tag.match(okImg)) ? tag : ""	
+			    })	
+	
+			    wmd.panels.preview.innerHTML = text; // Original code 				if (wmd.panels.preview) {
+					wmd.panels.preview.innerHTML = text;
+// prettify the code
 				prettyPrint();
 			}
-			
+				
 			setPanelScrollTops();
 			
 			if (isFirstTimeFilled) {
