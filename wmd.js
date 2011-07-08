@@ -282,7 +282,7 @@ Attacklab.wmdBase = function(){
 				text = text.replace('http://https://', 'https://');
 				text = text.replace('http://ftp://', 'ftp://');
 				
-				if (text.indexOf('http://') === -1 && text.indexOf('ftp://') === -1 && text.indexOf('https://') === -1) {
+				if (text.indexOf('http://') === -1 && text.indexOf('ftp://') === -1 && text.indexOf('https://') === -1  && text.indexOf('/') !== 0) {
 					text = 'http://' + text;
 				}
 			}
@@ -1089,6 +1089,14 @@ Attacklab.wmdBase = function(){
 			
 					var keyCode = key.charCode || key.keyCode;
 					var keyCodeStr = String.fromCharCode(keyCode).toLowerCase();
+
+                                        // Bugfix for messed up DEL and .
+				        if (keyCode === 46) {
+						keyCodeStr = "";
+					}
+					if (keyCode === 190) {
+						keyCodeStr = ".";
+					}
 					
 					switch(keyCodeStr) {
 						case "b":
@@ -1461,28 +1469,29 @@ Attacklab.wmdBase = function(){
 	
 	wmd.Chunks.prototype.addBlankLines = function(nLinesBefore, nLinesAfter, findExtraNewlines){
 	
-		if (nLinesBefore === undefined) {
-			nLinesBefore = 1;
-		}
-		
-		if (nLinesAfter === undefined) {
-			nLinesAfter = 1;
-		}
-		
+		nLinesBefore = (typeof nLinesBefore === "undefined" || nLinesBefore === null) ? 1 : nLinesBefore;
+		nLinesAfter = (typeof nLinesAfter === "undefined" || nLinesAfter === null) ? 1 : nLinesAfter;
+
+
 		nLinesBefore++;
 		nLinesAfter++;
-		
+
 		var regexText;
 		var replacementText;
-		
+		var match;
+
+		match = /(^\n*)/.exec(this.selection);
 		this.selection = this.selection.replace(/(^\n*)/, "");
-		this.startTag = this.startTag + re.$1;
+		this.startTag = this.startTag + (match ? match[1] : "");
+		match = /(\n*$)/.exec(this.selection);
 		this.selection = this.selection.replace(/(\n*$)/, "");
-		this.endTag = this.endTag + re.$1;
+		this.endTag = this.endTag + (match ? match[1] : "");
+		match = /(^\n*)/.exec(this.startTag);
 		this.startTag = this.startTag.replace(/(^\n*)/, "");
-		this.before = this.before + re.$1;
+		this.before = this.before + (match ? match[1] : "");
+		match = /(\n*$)/.exec(this.endTag);
 		this.endTag = this.endTag.replace(/(\n*$)/, "");
-		this.after = this.after + re.$1;
+		this.after = this.after + (match ? match[1] : "");
 		
 		if (this.before) {
 		
@@ -1708,7 +1717,8 @@ Attacklab.wmdBase = function(){
 			};
 			
 			if (isImage) {
-				util.prompt(imageDialogText, imageDefaultText, makeLinkMarkdown);
+				// add fourth param to identify image window
+			        util.prompt(imageDialogText, imageDefaultText, makeLinkMarkdown, 1);
 			}
 			else {
 				util.prompt(linkDialogText, linkDefaultText, makeLinkMarkdown);
@@ -1932,12 +1942,20 @@ Attacklab.wmdBase = function(){
 				}
 			}
 			
-			if (wmd.panels.preview) {
-				wmd.panels.preview.innerHTML = text;
-				// prettify the code
+			if (wmd.panels.preview) {	
+			    var okTags = /^(<\/?(b|blockquote|code|del|dd|dl|dt|em|h1|h2|h3|i|kbd|li|ol|p|pre|s|sup |sub|strong|strike|ul)>|<(br|hr)\s?\/?>)$/i;	
+			    var okLinks = /^(<a\shref="(\#\d+|(https?|ftp):\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.; \(\)]+)"(\stitle="[^"<>]+")?\s?>|<\/a>)$/i ;	
+			    var okImg = /^(<img\ssrc="https?:(\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]+)&quo t;(\swidth="\d{1,3}")?(\sheight="\d{1,3}")?(\salt="[ ^"<>]*")?(\stitle="[^"<>]*")?\s?\/?>) $/i;	
+			    text = text.replace(/<[^<>]*>?/gi, function (tag) {	
+			        return (tag.match(okTags) || tag.match(okLinks) || tag.match(okImg)) ? tag : ""	
+			    })	
+	
+			    wmd.panels.preview.innerHTML = text; // Original code 				if (wmd.panels.preview) {
+					wmd.panels.preview.innerHTML = text;
+// prettify the code
 				prettyPrint();
 			}
-			
+				
 			setPanelScrollTops();
 			
 			if (isFirstTimeFilled) {
