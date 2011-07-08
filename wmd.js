@@ -282,7 +282,7 @@ Attacklab.wmdBase = function(){
 				text = text.replace('http://https://', 'https://');
 				text = text.replace('http://ftp://', 'ftp://');
 				
-				if (text.indexOf('http://') === -1 && text.indexOf('ftp://') === -1 && text.indexOf('https://') === -1) {
+				if (text.indexOf('http://') === -1 && text.indexOf('ftp://') === -1 && text.indexOf('https://') === -1  && text.indexOf('/') !== 0) {
 					text = 'http://' + text;
 				}
 			}
@@ -1466,28 +1466,29 @@ Attacklab.wmdBase = function(){
 	
 	wmd.Chunks.prototype.addBlankLines = function(nLinesBefore, nLinesAfter, findExtraNewlines){
 	
-		if (nLinesBefore === undefined) {
-			nLinesBefore = 1;
-		}
-		
-		if (nLinesAfter === undefined) {
-			nLinesAfter = 1;
-		}
-		
+		nLinesBefore = (typeof nLinesBefore === "undefined" || nLinesBefore === null) ? 1 : nLinesBefore;
+		nLinesAfter = (typeof nLinesAfter === "undefined" || nLinesAfter === null) ? 1 : nLinesAfter;
+
+
 		nLinesBefore++;
 		nLinesAfter++;
-		
+
 		var regexText;
 		var replacementText;
-		
+		var match;
+
+		match = /(^\n*)/.exec(this.selection);
 		this.selection = this.selection.replace(/(^\n*)/, "");
-		this.startTag = this.startTag + re.$1;
+		this.startTag = this.startTag + (match ? match[1] : "");
+		match = /(\n*$)/.exec(this.selection);
 		this.selection = this.selection.replace(/(\n*$)/, "");
-		this.endTag = this.endTag + re.$1;
+		this.endTag = this.endTag + (match ? match[1] : "");
+		match = /(^\n*)/.exec(this.startTag);
 		this.startTag = this.startTag.replace(/(^\n*)/, "");
-		this.before = this.before + re.$1;
+		this.before = this.before + (match ? match[1] : "");
+		match = /(\n*$)/.exec(this.endTag);
 		this.endTag = this.endTag.replace(/(\n*$)/, "");
-		this.after = this.after + re.$1;
+		this.after = this.after + (match ? match[1] : "");
 		
 		if (this.before) {
 		
