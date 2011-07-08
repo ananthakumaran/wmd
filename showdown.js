@@ -1146,32 +1146,11 @@ var _EncodeBackslashEscapes = function(text) {
 	return text;
 }
 
-
 var _DoAutoLinks = function(text) {
-
-	text = text.replace(/<((https?|ftp|dict):[^'">\s]+)>/gi,"<a href=\"$1\">$1</a>");
-
-	// Email addresses: <address@domain.foo>
-
-	/*
-		text = text.replace(/
-			<
-			(?:mailto:)?
-			(
-				[-.\w]+
-				\@
-				[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+
-			)
-			>
-		/gi, _DoAutoLinks_callback());
-	*/
-	text = text.replace(/<(?:mailto:)?([-.\w]+\@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)>/gi,
-		function(wholeMatch,m1) {
-			return _EncodeEmailAddress( _UnescapeSpecialChars(m1) );
-		}
-	);
-
-	return text;
+    // use simplified format for links, to enable whitelisting link attributes
+    text = text.replace(/(^|\s)(https?|ftp)(:\/\/[-A-Z0-9+&@#\/%?=~_|\[\]\(\)!:,\.;]*[-A-Z0-9+&@#\/%=~_|\[\]])($|\W)/gi, "$1<$2$3>$4");
+    text = text.replace(/<((https?|ftp):[^'">\s]+)>/gi, '<a href="$1">$1</a>');
+    return text;
 }
 
 
