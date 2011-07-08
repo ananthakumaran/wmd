@@ -1316,7 +1316,7 @@ Attacklab.wmdBase = function(){
 		
 		this.setInputAreaSelectionStartEnd = function(){
 		
-			if (inputArea.selectionStart || inputArea.selectionStart === 0) {
+			if (!wmd.ieRetardedClick && (inputArea.selectionStart || inputArea.selectionStart === 0)) {
 			
 				stateObj.start = inputArea.selectionStart;
 				stateObj.end = inputArea.selectionEnd;
