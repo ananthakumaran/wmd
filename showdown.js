@@ -132,8 +132,7 @@ this.makeHtml = function(text) {
 	text = text.replace(/\r/g,"\n"); // Mac to Unix
 
 	// Make sure text begins and ends with a couple of newlines:
-	text = "\n\n" + text + "\n\n"; // You may comment this line if you want that a new line will be actually a new line in WMD editor
-        
+	text = "\n\n" + text + "\n\n"; 
 
 	// Convert all tabs to spaces.
 	text = _Detab(text);
@@ -227,9 +226,6 @@ var _StripLinkDefinitions = function(text) {
 var _HashHTMLBlocks = function(text) {
 	// attacklab: Double up blank lines to reduce lookaround
 	text = text.replace(/\n/g,"\n\n");
-        // If you want newlines in wmd as you make them in textarea (the editor itself) comment the previous line and
-        // uncomment the line below
-        // text = text.replace(/\n/g,"<br />");
 
 	// Hashify HTML blocks:
 	// We only want to do this for block-level HTML tags, such as headers,
@@ -347,7 +343,6 @@ var _HashHTMLBlocks = function(text) {
 	text = text.replace(/(?:\n\n)([ ]{0,3}(?:<([?%])[^\r]*?\2>)[ \t]*(?=\n{2,}))/g,hashElement);
 
 	// attacklab: Undo double lines (see comment at top of this function)
-        // If you want an actual newline as you make it in the textarea (the editor itself) comment the line below
 	text = text.replace(/\n\n/g,"\n"); 
        
 	return text;
@@ -892,7 +887,8 @@ var _DoCodeBlocks = function(text) {
 	// attacklab: sentinel workarounds for lack of \A and \Z, safari\khtml bug
 	text += "~0";
 	
-	text = text.replace(/(?:\n\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=~0))/g,
+        // Changed from \n\n to \n for code block to start from one new line. No need in two.
+	text = text.replace(/(?:\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=~0))/g,
 		function(wholeMatch,m1,m2) {
 			var codeblock = m1;
 			var nextChar = m2;
