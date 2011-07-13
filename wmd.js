@@ -2131,7 +2131,7 @@ Attacklab.wmdBase = function(){
 			var nLinesBefore = 1;
 			var nLinesAfter = 1;
 			
-			//  || chunk.after === "" - because it spoils our codeblock, so it just can't auto-indent without newline
+			//  removed || chunk.after === "" because it spoils our codeblock, so it just can't auto-indent without newline
 			if(/\n(\t|[ ]{4,}).*\n$/.test(chunk.before)){
 				nLinesBefore = 0; 
 			}
